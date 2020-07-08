@@ -5,7 +5,7 @@ Toast = {
       icon: 'success',
       title: message,
       showConfirmButton: false,
-      timer: 3000
+      timer: 2000
     })
   },
 
