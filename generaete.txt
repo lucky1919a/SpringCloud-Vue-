@@ -1,0 +1,11 @@
+创建maven启动命令mybatis-generator:generate -e
+
+使用vue-cli建立admin项目 #离线 .vue-templates
+vue init webpack <project_name>   --offline
+vue init webpack-simple-master admin  --offline
+
+cnpm install vue-router --save --dev
+cnpm install axios --save --dev
+
+freemarker模板引擎生成service、controller、vue
+创建generator模块,freemarker dom4j server

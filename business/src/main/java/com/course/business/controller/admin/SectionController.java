@@ -3,9 +3,9 @@ package com.course.business.controller.admin;
 import com.course.server.common.Page;
 import com.course.server.common.ResponseServer;
 import com.course.server.common.ValidatorUtil;
-import com.course.server.domain.Chapter;
-import com.course.server.dto.ChapterDto;
-import com.course.server.service.ChapterService;
+import com.course.server.domain.Section;
+import com.course.server.dto.SectionDto;
+import com.course.server.service.SectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -14,35 +14,36 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/chapter")
-public class ChapterController {
+@RequestMapping("/admin/section")
+public class SectionController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChapterController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SectionController.class);
 
-    public static final String BUSINESS_NAME = "大章";
+    public static final String BUSINESS_NAME = "小节";
 
     @Resource
-    private ChapterService chapterService;
+    private SectionService sectionService;
 
     @RequestMapping("/query.do")
     public ResponseServer query(@RequestBody Page page) {
         ResponseServer responseServer = new ResponseServer();
-        chapterService.list(page);
+        sectionService.list(page);
         responseServer.setContent(page);
         return responseServer;
     }
 
     @RequestMapping("/save")
-    public ResponseServer save(@RequestBody ChapterDto chapterDto) {
-        LOG.info("chapterDto: {}", chapterDto);
+    public ResponseServer save(@RequestBody SectionDto sectionDto) {
+        LOG.info("sectionDto: {}", sectionDto);
         // 保存校验
-        ValidatorUtil.require(chapterDto.getName(), "名称");
-        ValidatorUtil.require(chapterDto.getCourseId(), "课程ID");
-        ValidatorUtil.length(chapterDto.getCourseId(), "课程ID", 1, 8);
+              ValidatorUtil.require(sectionDto.getTitle(), "标题");
+              ValidatorUtil.length(sectionDto.getTitle(), "标题", 1, 50);
+              ValidatorUtil.length(sectionDto.getVideo(), "视频", 1, 200);
+
 
         ResponseServer responseServer = new ResponseServer();
-        chapterService.save(chapterDto);
-        responseServer.setContent(chapterDto);
+        sectionService.save(sectionDto);
+        responseServer.setContent(sectionDto);
         return responseServer;
     }
 
@@ -50,7 +51,7 @@ public class ChapterController {
     public ResponseServer save(@PathVariable String id) {
         LOG.info("id: {}", id);
         ResponseServer responseServer = new ResponseServer();
-        chapterService.delete(id);
+        sectionService.delete(id);
         return responseServer;
     }
 }

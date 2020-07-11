@@ -93,7 +93,6 @@
     },
     mounted: function () {
       let _this = this;
-
       _this.$refs.pagination.size=5;
       _this.list(1);
     },
@@ -160,9 +159,9 @@
           size: _this.$refs.pagination.size,
         }).then((response)=>{
           Loading.hide();
-          console.log("查询大章列表结果：", response);
-          _this.chapters = response.data.list;
-          _this.$refs.pagination.render(page, response.data.total);
+          let resp = response.data;
+          _this.chapters =resp.content.list;
+          _this.$refs.pagination.render(page, resp.content.total);
         })
       }
     }
