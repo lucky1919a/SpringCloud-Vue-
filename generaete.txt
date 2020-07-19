@@ -1,7 +1,7 @@
 创建maven启动命令mybatis-generator:generate -e
 
 使用vue-cli建立admin项目 #离线 .vue-templates
-vue init webpack <project_name>   --offline
+vue init webpack <poject_name>   --offline
 vue init webpack-simple-master admin  --offline
 
 cnpm install vue-router --save --dev
@@ -9,3 +9,18 @@ cnpm install axios --save --dev
 
 freemarker模板引擎生成service、controller、vue
 创建generator模块,freemarker dom4j server
+
+7/19 文件上传功能开发
+1.增加file模块用于文件上传和存存储 √
+2.增加springboot静态资源配置，配置文件访问路径 √
+3.上传文件类型和大小判断 √
+4.增加文件管理功能 √
+4.制作文件上传公共组件 √
+4.大文件断点续传
+5.技术秒传
+6.基于oss的文件上传
+
+7/20 用户管理与登录
+
+
+7/21通用权限设计

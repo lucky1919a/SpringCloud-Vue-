@@ -1,6 +1,16 @@
 <template>
   <div>
+    <h4 class="lighter">
+      <i class="ace-icon fa fa-hand-o-right icon-animated-hand-pointer blue"></i>
+      <router-link to="/business/course" class="pink"> {{course1.name}} </router-link>
+    </h4>
+    <hr>
   <p>
+     <router-link to="/business/course" class="btn btn-white btn-default btn-round">
+        <i class="ace-icon fa fa-arrow-left"></i>
+        返回课程
+      </router-link>
+      &nbsp;
     <button v-on:click="add()" class="btn btn-white btn-default btn-round">
       <i class="ace-icon fa fa-edit"></i>
       新增
@@ -31,11 +41,20 @@
       <td>{{chapter.courseId}}</td>
       <td>
         <div class="hidden-sm hidden-xs btn-group">
-          <button v-on:click="edit(chapter)" class="btn btn-xs btn-info">
+          <button v-on:click="toSection(chapter)" class="btn btn-white btn-xs btn-info btn-round">
+            小节
+          </button>&nbsp;
+         <!-- <button v-on:click="edit(chapter)" class="btn btn-xs btn-info">
             <i class="ace-icon fa fa-pencil bigger-120"></i>
           </button>
           <button  v-on:click="del(chapter.id)" class="btn btn-xs btn-danger">
             <i class="ace-icon fa fa-trash-o bigger-120"></i>
+          </button>-->
+          <button v-on:click="edit(chapter)" class="btn btn-white btn-xs btn-info btn-round">
+            编辑
+          </button>&nbsp;
+          <button v-on:click="del(chapter.id)" class="btn btn-white btn-xs btn-warning btn-round">
+            删除
           </button>
         </div>
       </td>
@@ -88,12 +107,19 @@
     data: function () {
       return {
         chapter: {},
-        chapters: []
+        chapters: [],
+        course1: {},
       }
     },
     mounted: function () {
       let _this = this;
       _this.$refs.pagination.size=5;
+      let course1 = SessionStorage.get(SESSION_KEY_COURSE) || {};
+      console.log(course1.id+"--")
+      if (Tool.isEmpty(course1)) {
+        _this.$router.push("/welcome");
+      }
+      _this.course1 = course1;
       _this.list(1);
     },
     methods: {
@@ -116,13 +142,6 @@
       },
       save(page) {
         let _this = this;
-        // 保存校验
-       /* if (!Validator.require(_this.chapter.name, "名称")
-          || !Validator.require(_this.chapter.courseId, "课程ID")
-          || !Validator.length(_this.chapter.courseId, "课程ID", 1, 8)) {
-          return;
-        }*/
-
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/chapter/save', _this.chapter).then((response)=>{
           console.log("保存大章列表结果：", response);
           let resp = response.data;
@@ -151,12 +170,21 @@
           })
         });
       },
+      /**
+       * 点击【小节】
+       */
+      toSection(chapter) {
+        let _this = this;
+        SessionStorage.set(SESSION_KEY_CHAPTER, chapter);
+        _this.$router.push("/business/section");
+      },
       list(page) {
         let _this = this;
         Loading.show();
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/chapter/query.do', {
           page: page,
           size: _this.$refs.pagination.size,
+          courseId: _this.course1.id
         }).then((response)=>{
           Loading.hide();
           let resp = response.data;

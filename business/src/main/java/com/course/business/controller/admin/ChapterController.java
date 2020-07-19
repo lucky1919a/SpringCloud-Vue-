@@ -5,6 +5,7 @@ import com.course.server.common.ResponseServer;
 import com.course.server.common.ValidatorUtil;
 import com.course.server.domain.Chapter;
 import com.course.server.dto.ChapterDto;
+import com.course.server.dto.ChapterPageDto;
 import com.course.server.service.ChapterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,11 @@ public class ChapterController {
     private ChapterService chapterService;
 
     @RequestMapping("/query.do")
-    public ResponseServer query(@RequestBody Page page) {
+    public ResponseServer query(@RequestBody ChapterPageDto chapterPageDto) {
         ResponseServer responseServer = new ResponseServer();
-        chapterService.list(page);
-        responseServer.setContent(page);
+        ValidatorUtil.require(chapterPageDto.getCourseId(), "课程ID");  //验证
+        chapterService.list(chapterPageDto);
+        responseServer.setContent(chapterPageDto);
         return responseServer;
     }
 

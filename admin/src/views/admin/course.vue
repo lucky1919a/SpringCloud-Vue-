@@ -222,7 +222,6 @@
     mounted: function() {
       let _this = this;
       _this.$refs.pagination.size = 9;
-    /*  _this.initTree(); */ //加载树形插件
       _this.allCategory();
       _this.list(1);
     },
@@ -263,7 +262,8 @@
           _this.$refs.pagination.render(page, resp.content.total);
         })
       },
-      allCategory() {  //加载分类树形插件
+      //加载分类树形插件
+      allCategory() {
         let _this = this;
         Loading.show();
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/category/all').then((response)=>{
@@ -272,16 +272,17 @@
           _this.categorys= resp.content;
           console.log(resp.content);
 
-         _this.initTree();
+          _this.initTree();
         })
       },
-       /*加载树形插件*/
+      /*加载树形插件*/
       initTree()
       {
         let _this = this;
         let setting = {
           check: {
-            enable: true
+            enable: true,
+            chkboxType: { "Y" : "p", "N" : "p" },  //#勾选时关联父节点，取消时取消父节点
           },
           data: {
             simpleData: {
@@ -294,6 +295,27 @@
         };
         let zNodes = _this.categorys;
         this.tree = $.fn.zTree.init($("#tree"), setting, zNodes);
+      },
+      /**
+       * 查找课程下所有分类
+       * @param courseId
+       */
+      listCategory(courseId) {
+        let _this = this;
+        Loading.show();
+        _this.$ajax.post('http://127.0.0.1:9000/business/admin/course/list-category/' + courseId).then((res)=>{
+          Loading.hide();
+          console.log("查找课程下所有分类结果：", res);
+          let response = res.data;
+          let categorys = response.content;
+
+          // 勾选查询到的分类
+          _this.tree.checkAllNodes(false);
+          for (let i = 0; i < categorys.length; i++) {
+            let node = _this.tree.getNodeByParam("id", categorys[i].categoryId);
+            _this.tree.checkNode(node, true);
+          }
+        })
       },
 
 
@@ -319,7 +341,6 @@
           return;
         }
         _this.course.categorys = categorys;
-
         Loading.show();
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/course/save', _this.course).then((response)=>{
           Loading.hide();
@@ -352,25 +373,12 @@
         });
       },
       /**
-       * 查找课程下所有分类
-       * @param courseId
+       * 点击【大章】
        */
-      listCategory(courseId) {
+      toChapter(course) {
         let _this = this;
-        Loading.show();
-        _this.$ajax.post('http://127.0.0.1:9000/business/admin/course/list-category/' + courseId).then((res)=>{
-          Loading.hide();
-          console.log("查找课程下所有分类结果：", res);
-          let response = res.data;
-          let categorys = response.content;
-
-          // 勾选查询到的分类
-          _this.tree.checkAllNodes(false);
-          for (let i = 0; i < categorys.length; i++) {
-            let node = _this.tree.getNodeByParam("id", categorys[i].categoryId);
-            _this.tree.checkNode(node, true);
-          }
-        })
+        SessionStorage.set(SESSION_KEY_COURSE, course);
+        _this.$router.push("/business/chapter");
       },
     }
   }
