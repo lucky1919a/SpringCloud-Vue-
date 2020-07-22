@@ -1,14 +1,21 @@
 package com.course.server.service;
 
 import com.course.server.domain.Course;
+import com.course.server.domain.CourseContent;
 import com.course.server.domain.CourseExample;
+import com.course.server.dto.CourseContentDto;
 import com.course.server.dto.CourseDto;
 import com.course.server.common.Page;
+import com.course.server.mapper.CourseContentMapper;
 import com.course.server.mapper.CourseMapper;
 import com.course.server.common.CopyUtil;
 import com.course.server.common.UuidUtil;
+import com.course.server.mapper.my.MyCourseMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,8 +25,21 @@ import java.util.List;
 @Service
 public class CourseService {
 
+    private static final Logger logger = LoggerFactory.getLogger(CourseService.class);
+
     @Resource
     private CourseMapper courseMapper;
+
+    @Resource
+    private MyCourseMapper myCourseMapper;
+
+    @Autowired
+    private CourseCategoryService  courseCategoryService;
+
+    @Resource
+    private CourseContentMapper courseContentMapper;
+
+
 
     /**
      * 列表查询
@@ -44,6 +64,8 @@ public class CourseService {
         } else {
             this.update(course);
         }
+        // 批量保存课程分类
+        courseCategoryService.saveBatch(courseDto.getId(), courseDto.getCategorys());
     }
 
     /**
@@ -66,5 +88,38 @@ public class CourseService {
      */
     public void delete(String id) {
         courseMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 更新课程时长
+     * @param courseId
+     * @return
+     */
+    public void updateTime(String courseId) {
+        logger.info("更新课程时长：{}", courseId);
+        myCourseMapper.updateTime(courseId);
+    }
+
+    /**
+     * 查找课程内容
+     */
+    public CourseContentDto findContent(String id) {
+        CourseContent content = courseContentMapper.selectByPrimaryKey(id);
+        if (content == null) {
+            return null;
+        }
+        return CopyUtil.copy(content, CourseContentDto.class);
+    }
+
+    /**
+     * 保存课程内容，包含新增和修改
+     */
+    public int saveContent(CourseContentDto contentDto) {
+        CourseContent content = CopyUtil.copy(contentDto, CourseContent.class);
+        int i = courseContentMapper.updateByPrimaryKeyWithBLOBs(content);
+        if (i == 0) {
+            i = courseContentMapper.insert(content);
+        }
+        return i;
     }
 }

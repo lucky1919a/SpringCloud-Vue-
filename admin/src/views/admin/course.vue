@@ -35,6 +35,17 @@
             <h3 class="search-title">
               <a href="#" class="blue">{{course.name}}</a>
             </h3>
+
+            <div v-for="teacher in teachers.filter(t=>{return t.id===course.teacherId})" class="profile-activity clearfix">
+              <div>
+                <img v-show="!teacher.image" class="pull-left" src="/public/ace/assets/images/avatars/avatar5.png">
+                <img v-show="teacher.image" class="pull-left" v-bind:src="teacher.image" style="width: 40px;height: 40px">
+                <a class="user" href="#"> {{teacher.name}} </a>
+                <br>
+                {{teacher.position}}
+              </div>
+            </div>
+
             <p>
               <span class="blue bolder bigger-150">{{course.price}}&nbsp;<i class="fa fa-rmb"></i></span>&nbsp;
             </p>
@@ -44,11 +55,18 @@
             <p>
               <span class="badge badge-info">{{course.id}}</span>
               <span class="badge badge-info">排序：{{course.sort}}</span>
-              <span class="badge badge-info">时长：{{course.time}}</span>
+             <!-- <span class="badge badge-info">时长：{{course.time}}</span>-->
+              <span class="badge badge-info">时长：{{course.time | formatSecond}}</span>
             </p>
             <p>
               <button v-on:click="toChapter(course)" class="btn btn-white btn-xs btn-info btn-round">
                 大章
+              </button>&nbsp;
+              <button v-on:click="editContent(course)" class="btn btn-white btn-xs btn-info btn-round">
+                内容
+              </button>&nbsp;
+              <button v-on:click="openSortModal(course)" class="btn btn-white btn-xs btn-info btn-round">
+                排序
               </button>&nbsp;
               <button v-on:click="edit(course)" class="btn btn-white btn-xs btn-info btn-round">
                 编辑
@@ -126,11 +144,37 @@
               </div>
 
               <div class="form-group">
+                <label class="col-sm-2 control-label">封面</label>
+                <div class="col-sm-10">
+                  <file v-bind:id="'image-upload'"
+                        v-bind:text="'上传封面'"
+                        v-bind:suffixs="['jpg', 'jpeg', 'png']"
+                        v-bind:use="FILE_USE.COURSE.key"
+                        v-bind:after-upload="afterUpload"></file>
+                  <div v-show="course.image" class="row">
+                    <div class="col-md-6">
+                      <img v-bind:src="course.image" class="img-responsive">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <label class="col-sm-2 control-label">名称</label>
                 <div class="col-sm-10">
                   <input v-model="course.name" class="form-control">
                 </div>
               </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">讲师</label>
+                <div class="col-sm-10">
+                  <select v-model="course.teacherId" class="form-control">
+                    <option v-for="o in teachers" v-bind:value="o.id">{{o.name}}</option>
+                  </select>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label class="col-sm-2 control-label">概述</label>
                 <div class="col-sm-10">
@@ -147,12 +191,6 @@
                 <label class="col-sm-2 control-label">价格（元）</label>
                 <div class="col-sm-10">
                   <input v-model="course.price" class="form-control">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label">封面</label>
-                <div class="col-sm-10">
-                  <input v-model="course.image" class="form-control">
                 </div>
               </div>
               <div class="form-group">
@@ -200,13 +238,50 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    <div id="course-content-modal" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">内容编辑</h4>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group">
+                <div class="col-lg-12">
+                  {{saveContentLabel}}
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-lg-12">
+                  <div id="content"></div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white btn-default btn-round" data-dismiss="modal">
+              <i class="ace-icon fa fa-times"></i>
+              取消
+            </button>
+            <button type="button" class="btn btn-white btn-info btn-round" v-on:click="saveContent()">
+              <i class="ace-icon fa fa-plus blue"></i>
+              保存
+            </button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
   </div>
 </template>
 
 <script>
   import Pagination from "../../components/pagination";
+  import File from "../../components/file";
   export default {
-    components: {Pagination},
+    components: {Pagination,File},
     name: "business-course",
     data: function() {
       return {
@@ -215,14 +290,18 @@
                 COURSE_LEVEL: COURSE_LEVEL,
                 COURSE_CHARGE: COURSE_CHARGE,
                 COURSE_STATUS: COURSE_STATUS,
+        FILE_USE: FILE_USE,
         categorys: [],
         tree: {},
+        saveContentLabel: "",
+        teachers: [],
     }
     },
     mounted: function() {
       let _this = this;
       _this.$refs.pagination.size = 9;
       _this.allCategory();
+      _this.allTeacher();
       _this.list(1);
     },
     methods: {
@@ -260,6 +339,15 @@
           let resp = response.data;
           _this.courses =resp.content.list;
           _this.$refs.pagination.render(page, resp.content.total);
+        })
+      },
+      allTeacher() {
+        let _this = this;
+        Loading.show();
+        _this.$ajax.post('http://127.0.0.1:9000/business/admin/teacher/all').then((response)=>{
+          Loading.hide();
+          let resp = response.data;
+          _this.teachers = resp.content;
         })
       },
       //加载分类树形插件
@@ -380,13 +468,78 @@
         SessionStorage.set(SESSION_KEY_COURSE, course);
         _this.$router.push("/business/chapter");
       },
+
+      /**
+       * 点击【内容】
+       */
+      editContent(course) {
+        let _this = this;
+        let id = course.id;
+        _this.course = course;
+        $("#content").summernote({
+          focus: true,
+          height: 300
+        });
+        // 先清空历史文本
+        $("#content").summernote('code', '');
+        _this.saveContentLabel = "";
+        Loading.show();
+        _this.$ajax.get('http://127.0.0.1:9000/business/admin/course/find-content/' + id).then((response)=>{
+          Loading.hide();
+          let resp = response.data;
+
+          if (resp.success) {
+            $("#course-content-modal").modal({backdrop: 'static', keyboard: false});
+            if (resp.content) {
+              $("#content").summernote('code', resp.content.content);
+            }
+            // 定时自动保存
+            let saveContentInterval = setInterval(function() {
+              _this.saveContent();
+            }, 5000);
+            // 关闭内容框时，清空自动保存任务
+            $('#course-content-modal').on('hidden.bs.modal', function (e) {
+              clearInterval(saveContentInterval);
+            })
+          } else {
+            Toast.warning(resp.message);
+          }
+        });
+       /* $("#course-content-modal").modal({backdrop: 'static', keyboard: false}); *///点击背景空白处不被关闭;触发esc事件不关闭
+      },
+      /**
+       * 保存内容
+       */
+      saveContent () {
+        let _this = this;
+        let content = $("#content").summernote("code");
+        _this.$ajax.post('http://127.0.0.1:9000/business/admin/course/save-content', {
+          id: _this.course.id,
+          content: content
+        }).then((response)=>{
+          Loading.hide();
+          let resp = response.data;
+          if (resp.success) {
+          /*  Toast.success("内容保存成功");*/
+            let now = Tool.dateFormat("hh:mm:ss");
+            _this.saveContentLabel = "最后保存时间：" + now;
+          } else {
+            Toast.warning(resp.message);
+          }
+        });
+      },
+      afterUpload(resp) {
+        let _this = this;
+        let image = resp.content.path;
+        _this.course.image = image;
+      },
     }
   }
 </script>
 
 <style scoped>
   .caption h3 {
-    font-size: 20px;
+    font-size: 16px;
     /*单行溢出*/
     overflow: hidden;
     text-overflow:ellipsis;

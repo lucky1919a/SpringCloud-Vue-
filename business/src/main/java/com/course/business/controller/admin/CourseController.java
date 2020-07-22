@@ -5,6 +5,7 @@ import com.course.server.common.ResponseServer;
 import com.course.server.common.ValidatorUtil;
 import com.course.server.domain.Course;
 import com.course.server.dto.CourseCategoryDto;
+import com.course.server.dto.CourseContentDto;
 import com.course.server.dto.CourseDto;
 import com.course.server.service.CourseCategoryService;
 import com.course.server.service.CourseService;
@@ -71,6 +72,21 @@ public class CourseController {
         ResponseServer responseServer = new ResponseServer();
         List<CourseCategoryDto> dtoList = courseCategoryService.listByCourse(courseId);
         responseServer.setContent(dtoList);
+        return responseServer;
+    }
+
+    @GetMapping("/find-content/{id}")
+    public ResponseServer findContent(@PathVariable String id) {
+        ResponseServer responseServer = new ResponseServer();
+        CourseContentDto contentDto = courseService.findContent(id);
+        responseServer.setContent(contentDto);
+        return responseServer;
+    }
+
+    @PostMapping("/save-content")
+    public ResponseServer saveContent(@RequestBody CourseContentDto contentDto) {
+        ResponseServer responseServer = new ResponseServer();
+        courseService.saveContent(contentDto);
         return responseServer;
     }
 }

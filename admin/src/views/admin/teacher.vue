@@ -14,7 +14,7 @@
 
     <pagination ref="pagination" v-bind:list="list" v-bind:itemCount="8"></pagination>
 
-    <table id="simple-table" class="table  table-bordered table-hover">
+   <!-- <table id="simple-table" class="table  table-bordered table-hover">
       <thead>
       <tr>
               <th>id</th>
@@ -49,7 +49,55 @@
         </td>
       </tr>
       </tbody>
-    </table>
+    </table>-->
+
+    <div class="row">
+      <div v-for="teacher in teachers" class="col-md-3" style="text-align: center">
+        <div>
+          <span class="profile-picture">
+            <img v-show="!teacher.image" class="editable img-responsive editable-click editable-empty" src="/public/ace/assets/images/avatars/profile-pic.jpg" v-bind:title="teacher.intro"/>
+            <img v-show="teacher.image" class="media-object" v-bind:src="teacher.image" v-bind:title="teacher.intro" style="width: 180px;height: 200px"/>
+          </span>
+
+          <div class="space-4"></div>
+
+          <div class="width-85 label label-info label-xlg arrowed-in arrowed-in-right">
+            <div class="inline position-relative">
+              <a href="javascript:;" class="user-title-label dropdown-toggle" data-toggle="dropdown">
+                <i class="ace-icon fa fa-circle light-green"></i>
+                &nbsp;
+                <span class="white">{{teacher.position}}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-6"></div>
+
+        <a href="javascript:;" class="text-info bigger-110" v-bind:title="teacher.motto">
+          <i class="ace-icon fa fa-user"></i>
+          {{teacher.name}}【{{teacher.nickname}}】
+        </a>
+
+        <div class="space-6"></div>
+        <span style="color: #00BE67;">座右铭:{{teacher.motto}}</span>
+
+        <div class="space-6"></div>
+
+        <div class="profile-social-links align-center">
+          <button v-on:click="edit(teacher)" class="btn btn-xs btn-info">
+            <i class="ace-icon fa fa-pencil bigger-120"></i>
+          </button>
+          &nbsp;
+          <button v-on:click="del(teacher.id)" class="btn btn-xs btn-danger">
+            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+          </button>
+        </div>
+
+        <div class="hr hr16 dotted"></div>
+
+      </div>
+    </div>
 
     <div id="form-modal" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -75,7 +123,16 @@
               <div class="form-group">
                 <label class="col-sm-2 control-label">头像</label>
                 <div class="col-sm-10">
-                  <input v-model="teacher.image" class="form-control">
+                  <file v-bind:id="'image-upload'"
+                        v-bind:text="'上传头像'"
+                        v-bind:suffixs="['jpg', 'jpeg', 'png']"
+                        v-bind:use="FILE_USE.TEACHER.key"
+                        v-bind:after-upload="afterUpload"></file>
+                  <div v-show="teacher.image" class="row">
+                    <div class="col-md-4">
+                      <img v-bind:src="teacher.image" class="img-responsive">
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="form-group">
@@ -110,13 +167,15 @@
 
 <script>
   import Pagination from "../../components/pagination";
+  import File  from "../../components/file";
   export default {
-    components: {Pagination},
+    components: {Pagination,File},
     name: "business-teacher",
     data: function() {
       return {
     teacher: {},
         teachers: [],
+        FILE_USE: FILE_USE
     }
     },
     mounted: function() {
@@ -155,7 +214,7 @@
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/teacher/query.do', {
           page: page,
           size: _this.$refs.pagination.size,
-        }).then((response)=>{
+        }).then((response) => {
           Loading.hide();
           let resp = response.data;
           _this.teachers = resp.content.list;
@@ -183,7 +242,7 @@
         }
 
         Loading.show();
-        _this.$ajax.post('http://127.0.0.1:9000/business/admin/teacher/save', _this.teacher).then((response)=>{
+        _this.$ajax.post('http://127.0.0.1:9000/business/admin/teacher/save', _this.teacher).then((response) => {
           Loading.hide();
           let resp = response.data;
           if (resp.success) {
@@ -203,7 +262,7 @@
         let _this = this;
         Confirm.show("删除讲师后不可恢复，确认删除？", function () {
           Loading.show();
-          _this.$ajax.delete('http://127.0.0.1:9000/business/admin/teacher/delete/' + id).then((response)=>{
+          _this.$ajax.delete('http://127.0.0.1:9000/business/admin/teacher/delete/' + id).then((response) => {
             Loading.hide();
             let resp = response.data;
             if (resp.success) {
@@ -212,6 +271,11 @@
             }
           })
         });
+      },
+      afterUpload(resp) {
+        let _this = this;
+        let image = resp.content.path;
+        _this.teacher.image = image;
       }
     }
   }

@@ -6,6 +6,12 @@ import Welcome from "../views/admin/welcome.vue"
 import Chapter from "../views/admin/chapter.vue"
 import Section from "../views/admin/section.vue"
 import Course from "../views/admin/course.vue"
+import Category from "../views/admin/category.vue"
+import Teacher from "../views/admin/teacher.vue"
+import File from "../views/admin/file.vue"
+import User from "../views/admin/user.vue"
+import Resource from "../views/admin/resource.vue"
+import Role from "../views/admin/role.vue"
 
 
 Vue.use(Router)  //注册vue-router
@@ -25,6 +31,9 @@ export default new Router({
       path: '/',
       name: "admin",
       component: Admin,
+      meta: {
+        loginRequire: true
+      },
       children: [
         {
         path: 'welcome',
@@ -45,6 +54,37 @@ export default new Router({
           path: "business/course",
           name: "business/course",
           component: Course,
+        },
+        {
+          path: "business/teacher",
+          name: "business/teacher",
+          component: Teacher,
+        },
+        {
+           path: "file/file",
+           name: "file/file",
+           component: File,
+         },
+        {
+          path: "business/category",
+          name: "business/category",
+          component: Category,
+        }
+
+        ,
+        {
+          path: "system/user",
+          name: "system/user",
+          component: User,
+        },{
+          path: "system/resource",
+          name: "system/resource",
+          component: Resource,
+        },
+        {
+          path: "system/role",
+          name: "system/role",
+          component: Role,
         }
 
       ]

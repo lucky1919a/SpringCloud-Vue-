@@ -5,6 +5,7 @@ import com.course.server.common.ResponseServer;
 import com.course.server.common.ValidatorUtil;
 import com.course.server.domain.Section;
 import com.course.server.dto.SectionDto;
+import com.course.server.dto.SectionPageDao;
 import com.course.server.service.SectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +25,21 @@ public class SectionController {
     @Resource
     private SectionService sectionService;
 
-    @RequestMapping("/query.do")
+   /* @RequestMapping("/query.do")
     public ResponseServer query(@RequestBody Page page) {
         ResponseServer responseServer = new ResponseServer();
         sectionService.list(page);
         responseServer.setContent(page);
+        return responseServer;
+    }*/
+
+    @RequestMapping("/query.do")
+    public ResponseServer query(@RequestBody SectionPageDao sectionPageDto) {
+        ResponseServer responseServer = new ResponseServer();
+        ValidatorUtil.require(sectionPageDto.getCourseId(), "课程ID");
+        ValidatorUtil.require(sectionPageDto.getChapterId(), "大章ID");
+        sectionService.list(sectionPageDto);
+        responseServer.setContent(sectionPageDto);
         return responseServer;
     }
 

@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.*;
 
 public class ServerGenerator {
-    static String MODULE = "business";
+    static String MODULE = "system"; /*business*/
     static String toDtoPath = "server\\src\\main\\java\\com\\course\\server\\dto\\";
     static String toServicePath = "server\\src\\main\\java\\com\\course\\server\\service\\";
     static String toControllerPath = MODULE + "\\src\\main\\java\\com\\course\\" + MODULE + "\\controller\\admin\\";
@@ -66,6 +66,7 @@ public class ServerGenerator {
             System.out.println("生成成功");
         } catch (Exception e) {
             System.out.println("生成错误");
+            e.printStackTrace();
         }
 
     }

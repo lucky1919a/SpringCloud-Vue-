@@ -24,6 +24,17 @@ public class TeacherController {
     @Resource
     private TeacherService teacherService;
 
+    /**
+     * 列表查询
+     */
+    @PostMapping("/all")
+    public ResponseServer all() {
+        ResponseServer responseServer = new ResponseServer();
+        List<TeacherDto> teacherDtoList = teacherService.all();
+        responseServer.setContent(teacherDtoList);
+        return responseServer;
+    }
+
     @RequestMapping("/query.do")
     public ResponseServer query(@RequestBody Page page) {
         ResponseServer responseServer = new ResponseServer();

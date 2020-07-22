@@ -15,7 +15,10 @@
 			data: {
 				simpleData: {
 					enable: true
-				}
+				},
+        callback: {
+          onClick: zTreeOnClick
+        }
 			}
 		};
 
@@ -54,7 +57,7 @@
 		$(document).ready(function(){
 			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
 		});
-		//-->
+    //-->
 	</SCRIPT>
  </HEAD>
 

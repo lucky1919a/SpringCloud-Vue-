@@ -29,15 +29,26 @@
                       <fieldset>
                         <label class="block clearfix">
                           <span class="block input-icon input-icon-right">
-                            <input type="text" class="form-control" placeholder="Username"/>
+                            <input v-model="user.loginName" type="text" class="form-control" placeholder="用户名"/>
                             <i class="ace-icon fa fa-user"></i>
                           </span>
                         </label>
 
                         <label class="block clearfix">
                           <span class="block input-icon input-icon-right">
-                            <input type="password" class="form-control" placeholder="Password"/>
+                            <input v-model="user.password" type="password" class="form-control" placeholder="密码"/>
                             <i class="ace-icon fa fa-lock"></i>
+                          </span>
+                        </label>
+
+                        <label class="block clearfix">
+                          <span class="block input-icon input-icon-right">
+                            <div class="input-group">
+                                <input v-model="user.imageCode" type="text" class="form-control" placeholder="验证码">
+                              <span class="input-group-addon" id="basic-addon2">
+                                <img v-on:click="loadImageCode()" id="image-code" alt="验证码"/>
+                              </span>
+                            </div>
                           </span>
                         </label>
 
@@ -77,14 +88,56 @@
 <script>
   export default {
     name: 'login',
+    data: function() {
+      return {
+        user:{},
+        imageCodeToken: ""
+      }
+    },
     mounted:function () {
+      let _this = this;
       $('body').removeClass('class', 'no-skin');
       $('body').attr('login-layout light-login');
+
+      // 初始时加载一次验证码图片
+      _this.loadImageCode();
     },
     methods: {
       login() {
-        this.$router.push("/welcome");
-      }
+        let _this = this;
+         _this.user.password = hex_md5(_this.user.password + KEY);
+
+        _this.user.imageCodeToken = _this.imageCodeToken;
+
+        Loading.show();
+        _this.$ajax.post('http://127.0.0.1:9000/system/admin/user/login', _this.user).then((response)=>{
+          Loading.hide();
+          let resp = response.data;
+          if (resp.success) {
+            console.log("登录成功：", resp.content);
+            Tool.setLoginUser(resp.content);
+            _this.$router.push("/welcome");
+          } else {
+            _this.user.password='';
+            _this.loadImageCode();
+            Toast.warning(resp.message);
+          }
+        });
+      },
+      /**
+       * 加载图形验证码
+       */
+      loadImageCode: function () {
+        let _this = this;
+        _this.imageCodeToken = Tool.uuid(8);
+        $('#image-code').attr('src', 'http://127.0.0.1:9000/system/admin/kaptcha/image-code/' + _this.imageCodeToken);
+      },
     }
   }
 </script>
+
+<style scoped>
+   .input-group-addon {
+     padding: 0;
+    }
+</style>

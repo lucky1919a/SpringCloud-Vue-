@@ -26,8 +26,8 @@
       <tr>
         <th>ID</th>
         <th>标题</th>
-        <th>课程</th>
-        <th>大章</th>
+       <!-- <th>课程</th>
+        <th>大章</th>-->
         <th>视频</th>
         <th>时长</th>
         <th>收费</th>
@@ -40,10 +40,11 @@
       <tr v-for="section in sections">
         <td>{{section.id}}</td>
         <td>{{section.title}}</td>
-        <td>{{section.courseId}}</td>
-        <td>{{section.chapterId}}</td>
+       <!-- <td>{{section.courseId}}</td>
+        <td>{{section.chapterId}}</td>-->
         <td>{{section.video}}</td>
-        <td>{{section.time}}</td>
+      <!--  <td>{{section.time}}</td>-->
+        <td>{{section.time | formatSecond}}</td>
         <td>{{SECTION_CHARGE | optionKV(section.charge)}}</td>
         <td>{{section.sort}}</td>
       <td>
@@ -78,25 +79,36 @@
               <div class="form-group">
                 <label class="col-sm-2 control-label">课程</label>
                 <div class="col-sm-10">
-                  <input v-model="section.courseId" class="form-control">
+                  <!--<input v-model="section.courseId" class="form-control">-->
+                  <p class="form-control-static">{{course.name}}</p>
                 </div>
               </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label">大章</label>
                 <div class="col-sm-10">
-                  <input v-model="section.chapterId" class="form-control">
+                  <!--<input v-model="section.chapterId" class="form-control">-->
+                  <p class="form-control-static">{{chapter.name}}</p>
                 </div>
               </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label">视频</label>
                 <div class="col-sm-10">
-                  <input v-model="section.video" class="form-control">
+                  <file v-bind:id="'video-upload'"
+                        v-bind:text="'上传视频'"
+                        v-bind:suffixs="['mp4']"
+                        v-bind:use="FILE_USE.COURSE.key"
+                        v-bind:after-upload="afterUpload"></file>
+                  <div v-show="section.video" class="row">
+                    <div class="col-md-9">
+                      <video v-bind:src="section.video" id="video" controls="controls"></video>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="form-group">
                 <label class="col-sm-2 control-label">时长</label>
                 <div class="col-sm-10">
-                  <input v-model="section.time" class="form-control">
+              <input v-model="section.time" class="form-control">
                 </div>
               </div>
               <div class="form-group">
@@ -128,8 +140,9 @@
 
 <script>
   import Pagination from "../../components/pagination";
+  import File from "../../components/file";
   export default {
-    components: {Pagination},
+    components: {Pagination,File},
     name: "business-section",
     data: function() {
       return {
@@ -137,7 +150,7 @@
         sections: [],
        /* CHARGE: [{key:"C", value:"收费"},{key:"F", value:"免费"}],*/
         SECTION_CHARGE: SECTION_CHARGE,
-
+        FILE_USE: FILE_USE,
         course: {},  //所属课程
         chapter: {}, //课程大章
       }
@@ -183,6 +196,8 @@
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/section/query.do', {
           page: page,
           size: _this.$refs.pagination.size,
+          courseId: _this.course.id,
+          chapterId: _this.chapter.id
         }).then((response)=>{
           Loading.hide();
           let resp = response.data;
@@ -206,6 +221,9 @@
         ) {
           return;
         }
+
+        _this.section.courseId = _this.course.id;
+        _this.section.chapterId = _this.chapter.id;
 
         Loading.show();
         _this.$ajax.post('http://127.0.0.1:9000/business/admin/section/save', _this.section).then((response)=>{
@@ -237,7 +255,31 @@
             }
           })
         });
-      }
+      },
+      afterUpload(resp) {
+        let _this = this;
+        let video = resp.content.path;
+        _this.section.video = video;
+        _this.getTime();  //自动获取视频时长
+      },
+      /**
+       * 获取时长
+       */
+      getTime() {
+        let _this = this;
+        setTimeout(function () {
+          let ele = document.getElementById("video");
+          _this.section.time = parseInt(ele.duration, 10);
+        }, 1000);
+      },
     }
   }
 </script>
+
+<style scoped>
+  video {
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+</style>
