@@ -17,30 +17,16 @@ create table course (
   primary key (id)
 ) engine=innodb default charset=utf8mb4 comment='课程';
 
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000001', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
+insert into course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
+values ('00000001', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'P', 100, 0, now(), now());
 
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000009', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000002', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000003', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000004', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000005', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000006', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000007', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
-INSERT INTO course (id, name, summary, time, price, image, level, charge, status, enroll, sort, created_at, updated_at)
-VALUES ('00000008', '测试课程01', '这是一门测试课程', 7200, 19.9, '', 1, 'C', 'D', 100, 0, now(), now());
+alter table `course` add column (`teacher_id` char(8) comment '讲师|teacher.id');
 
+-- 大章
 drop table if exists `chapter`;
 create table `chapter` (
-  `id` char(8) not null comment 'ID',
-  `course_id` char(8) comment '课程ID',
+  `id` char(8) not null comment 'id',
+  `course_id` char(8) comment '课程id',
   `name` varchar(50) comment '名称',
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='大章';
@@ -60,25 +46,26 @@ insert into `chapter` (id, course_id, name) values ('00000012', '00000000', '测
 insert into `chapter` (id, course_id, name) values ('00000013', '00000000', '测试大章13');
 insert into `chapter` (id, course_id, name) values ('00000014', '00000000', '测试大章14');
 
-
 -- 小节
-DROP TABLE IF EXISTS `section`;
-CREATE TABLE `section` (
-  `id` CHAR(8) NOT NULL DEFAULT '' COMMENT 'ID',
-  `title` VARCHAR(50) NOT NULL COMMENT '标题',
-  `course_id` CHAR(8) COMMENT '课程|course.id',
-  `chapter_id` CHAR(8) COMMENT '大章|chapter.id',
-  `video` VARCHAR(200) COMMENT '视频',
-  `time` INT COMMENT '时长|单位秒',
-  `charge` CHAR(1) COMMENT '收费|C 收费；F 免费',
-  `sort` INT COMMENT '顺序',
-  `created_at` DATETIME(3) COMMENT '创建时间',
-  `updated_at` DATETIME(3) COMMENT '修改时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小节';
+drop table if exists `section`;
+create table `section` (
+  `id` char(8) not null default '' comment 'id',
+  `title` varchar(50) not null comment '标题',
+  `course_id` char(8) comment '课程|course.id',
+  `chapter_id` char(8) comment '大章|chapter.id',
+  `video` varchar(200) comment '视频',
+  `time` int comment '时长|单位秒',
+  `charge` char(1) comment '收费|C 收费；F 免费',
+  `sort` int comment '顺序',
+  `created_at` datetime(3) comment '创建时间',
+  `updated_at` datetime(3) comment '修改时间',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='小节';
 
-INSERT INTO `section` (id, title, course_id, chapter_id, video, time, charge, sort, created_at, updated_at)
-VALUES ('00000001', '测试小节01', '00000001', '00000000', '', 500, 'F', 1, now(), now());
+alter table `section` add column (`vod` char(32) comment 'vod|阿里云vod');
+
+insert into `section` (id, title, course_id, chapter_id, video, time, charge, sort, created_at, updated_at)
+values ('00000001', '测试小节01', '00000001', '00000000', '', 500, 'f', 1, now(), now());
 
 -- 分类
 drop table if exists `category`;
@@ -146,8 +133,7 @@ create table `course_category` (
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='课程分类';
 
-
-# 课程内容
+-- 课程内容
 drop table if exists `course_content`;
 create table `course_content` (
   `id` char(8) not null default '' comment '课程id',
@@ -155,6 +141,16 @@ create table `course_content` (
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='课程内容';
 
+-- 课程内容文件
+drop table if exists `course_content_file`;
+create table `course_content_file` (
+  `id` char(8) not null default '' comment 'id',
+  `course_id` char(8) not null comment '课程id',
+  `url` varchar(100) comment '地址',
+  `name` varchar(100) comment '文件名',
+  `size` int comment '大小|字节b',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='课程内容文件';
 
 -- 讲师
 drop table if exists `teacher`;
@@ -168,8 +164,6 @@ create table `teacher` (
   `intro` varchar(500) comment '简介',
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='讲师';
-alter table `course` add column (`teacher_id` char(8) comment '讲师|teacher.id');
-
 
 -- 文件
 drop table if exists `file`;
@@ -186,6 +180,12 @@ create table `file` (
   unique key `path_unique` (`path`)
 ) engine=innodb default charset=utf8mb4 comment='文件';
 
+alter table `file` add column (`shard_index` int comment '已上传分片');
+alter table `file` add column (`shard_size` int comment '分片大小|B');
+alter table `file` add column (`shard_total` int comment '分片总数');
+alter table `file` add column (`key` varchar(32) comment '文件标识');
+alter table `file` add unique key key_unique (`key`);
+alter table `file` add column (`vod` char(32) comment 'vod|阿里云vod');
 
 drop table if exists `user`;
 create table `user` (
@@ -197,7 +197,8 @@ create table `user` (
   unique key `login_name_unique` (`login_name`)
 ) engine=innodb default charset=utf8mb4 comment='用户';
 
-insert into `user` (id, login_name, name, password) values ('10000000', 'test', '测试', '202cb962ac59075b964b07152d234b70');
+# 初始test/test
+insert into `user` (id, login_name, name, password) values ('10000000', 'test', '测试', 'e70e2222a9d67c4f2eae107533359aa4');
 
 -- 资源
 drop table if exists `resource`;
@@ -208,18 +209,18 @@ create table `resource` (
   `request` varchar(200) null comment '请求|接口',
   `parent` char(6) comment '父id',
   primary key (`id`)
-) engine=innodb default charset=utf8 comment='资源';
+) engine=innodb default charset=utf8mb4 comment='资源';
 
+insert into `resource` values ('00', '欢迎', 'welcome', null, null);
 insert into `resource` values ('01', '系统管理', null, null, null);
-insert into `resource` values ('0101', '用户管理', '/system/user', null, '01');
+insert into `resource` values ('0101', '用户管理', 'system/user', null, '01');
 insert into `resource` values ('010101', '保存', null, '["/system/admin/user/list", "/system/admin/user/save"]', '0101');
 insert into `resource` values ('010102', '删除', null, '["/system/admin/user/delete"]', '0101');
 insert into `resource` values ('010103', '重置密码', null, '["/system/admin/user/save-password"]', '0101');
-insert into `resource` values ('0102', '资源管理', '/system/resource', null, '01');
+insert into `resource` values ('0102', '资源管理', 'system/resource', null, '01');
 insert into `resource` values ('010201', '保存/显示', null, '["/system/admin/resource"]', '0102');
-insert into `resource` values ('0103', '角色管理', '/system/role', null, '01');
+insert into `resource` values ('0103', '角色管理', 'system/role', null, '01');
 insert into `resource` values ('010301', '角色/权限管理', null, '["/system/admin/role"]', '0103');
-
 
 drop table if exists `role`;
 create table `role` (
@@ -233,7 +234,6 @@ insert into `role` values ('00000000', '系统管理员', '管理用户、角色
 insert into `role` values ('00000001', '开发', '维护资源');
 insert into `role` values ('00000002', '业务管理员', '负责业务管理');
 
-
 drop table if exists `role_resource`;
 create table `role_resource` (
   `id` char(8) not null default '' comment 'id',
@@ -242,6 +242,7 @@ create table `role_resource` (
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='角色资源关联';
 
+insert into `role_resource` values ('00000009', '00000000', '00');
 insert into `role_resource` values ('00000000', '00000000', '01');
 insert into `role_resource` values ('00000001', '00000000', '0101');
 insert into `role_resource` values ('00000002', '00000000', '010101');
@@ -252,7 +253,58 @@ insert into `role_resource` values ('00000006', '00000000', '010201');
 insert into `role_resource` values ('00000007', '00000000', '0103');
 insert into `role_resource` values ('00000008', '00000000', '010301');
 
----------------------- 测试
+drop table if exists `role_user`;
+create table `role_user` (
+  `id` char(8) not null default '' comment 'id',
+  `role_id` char(8) not null comment '角色|id',
+  `user_id` char(8) not null comment '用户|id',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='角色用户关联';
+
+insert into `role_user` values ('00000000', '00000000', '10000000');
+
+-- 会员
+drop table if exists `member`;
+create table `member` (
+  `id` char(8) not null default '' comment 'id',
+  `mobile` varchar(11) not null comment '手机号',
+  `password` char(32) not null comment '密码',
+  `name` varchar(50) comment '昵称',
+  `photo` varchar(200) comment '头像url',
+  `register_time` datetime(3) comment '注册时间',
+  primary key (`id`),
+  unique key `mobile_unique` (`mobile`)
+) engine=innodb default charset=utf8mb4 comment='会员';
+
+# 初始test/test
+insert into `member` (id, mobile, password, name, photo, register_time) values ('00000000', '12345678901', 'e70e2222a9d67c4f2eae107533359aa4', '测试', null, now());
+
+# 短信验证码
+drop table if exists `sms`;
+create table `sms` (
+  `id` char(8) not null default '' comment 'id',
+  `mobile` varchar(50) not null comment '手机号',
+  `code` char(6) not null comment '验证码',
+  `use` char(1) not null comment '用途|枚举[SmsUseEnum]：REGISTER("R", "注册"), FORGET("F", "忘记密码")',
+  `at` datetime(3) not null comment '生成时间',
+  `status` char(1) not null comment '用途|枚举[SmsStatusEnum]：USED("U", "已使用"), NOT_USED("N", "未使用")',
+  primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment='短信验证码';
+
+insert into `sms` (id, mobile, code, `use`, at, status) values ('00000000', '12345678901', '123456', 'R', now(), 'N');
+
+# 会员课程报名
+drop table if exists `member_course`;
+create table `member_course` (
+  `id` char(8) not null default '' comment 'id',
+  `member_id` char(8) not null comment '会员id',
+  `course_id` char(8) not null comment '课程id',
+  `at` datetime(3) not null comment '报名时间',
+  primary key (`id`),
+  unique key `member_course_unique` (`member_id`, `course_id`)
+) engine=innodb default charset=utf8mb4 comment='会员课程报名';
+
+# ---------------------- 测试
 
 drop table if exists `test`;
 create table `test` (
@@ -260,3 +312,6 @@ create table `test` (
   `name` varchar(50) comment '名称',
   primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment='测试';
+
+insert into `test` (id, name) values (1, '测试');
+insert into `test` (id, name) values (2, '测试2');

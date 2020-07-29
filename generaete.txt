@@ -29,6 +29,8 @@ freemarker模板引擎生成service、controller、vue
 7.图片秒传   x
 8.基于oss的文件上传 x
 
+9.阿里云视频点播服务,基于OSS原生SDK上传视频到点播 x
+
 7/21 用户管理与登录
 1.增加用户管理，用户是否存在验证;|从登录页面跳到控台主页时，侧边栏失效的问题 √
 2.加密传输与加密存储密码，重置密码, 编辑用户不修改密码 √
@@ -40,14 +42,31 @@ freemarker模板引擎生成service、controller、vue
 7/22通用权限设计
 1.通用权限解决方案（该项目权限解决方案）
 2.资源配置管理，资源树显示 √
-3.角色权限管理  √
-4.用户登录时获取资源权限
-5.权限拦截开发（避免登录用户通过path直接访问未分配的权限）
+3.角色资源管理 ,为角色分配用户 √
+4.用户登录时获取资源权限  √
+5.权限拦截开发 √
+(页面元素分配，页面路由拦截 API接口拦截)
+[避免登录用户通过path直接访问未分配的权限,API拦截防postman请求未分配接口]
 
 
 
 7/23 7/24 7/25 网站开发
+1.网站模块快速搭建，集成Bootstrap官方模板 Album √
+vue init webpack-simple-master web  --offline
+scanning files to index 一直转卡个不停
+cnpm install vue-router --save --dev
+cnpm install axios --save --dev
+2.首页开发  √
+https://www.runoob.com/try/demo_source/bootstrap-glyph-customization.htm bootstrap图标获取
+cnpm install --save-dev less-loader less
+3.课程列表，课程详情页面 √
+分类筛选                √
 
+章节显示与视频播放       √
+会员注册、登录、登出功能 √
+
+完善注册校检、发送短信  √
+课程报名与权限控制     √
 7/26 项目优化
 
 7/27 项目总结..

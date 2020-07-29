@@ -38,7 +38,7 @@ public class UserController {
     @RequestMapping("/query.do")
     public ResponseServer query(@RequestBody Page page) {
         ResponseServer responseServer = new ResponseServer();
-       userService.list(page);
+        userService.list(page);
         responseServer.setContent(page);
         return responseServer;
     }

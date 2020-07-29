@@ -39,7 +39,7 @@
             <button v-on:click="edit(user)" class="btn btn-xs btn-info">
               <i class="ace-icon fa fa-pencil bigger-120"></i>
             </button>
-            <button v-on:click="del(user.id)" class="btn btn-xs btn-danger">
+            <button v-show="hasResource('010102')" v-on:click="del(user.id)" class="btn btn-xs btn-danger">
               <i class="ace-icon fa fa-trash-o bigger-120"></i>
             </button>
           </div>
@@ -137,6 +137,13 @@
       _this.list(1);
     },
     methods: {
+      /**
+       * 查找是否有权限
+       * @param id
+       */
+      hasResource(id) {
+        return Tool.hasResource(id);
+      },
       /**
        * 点击【新增】
        */

@@ -17,14 +17,18 @@ public class EnumGenerator {
         StringBuffer bufferArray = new StringBuffer();
         long begin = System.currentTimeMillis();
         try {
+          /*  toJson(SectionChargeEnum.class, bufferObject, bufferArray);
+            toJson(YesNoEnum.class, bufferObject, bufferArray);
+            toJson(CourseLevelEnum.class, bufferObject, bufferArray);
+            toJson(CourseStatusEnum.class, bufferObject, bufferArray);*/
             toJson(SectionChargeEnum.class, bufferObject, bufferArray);
             toJson(YesNoEnum.class, bufferObject, bufferArray);
-           /* toJson(CourseLevelEnum.class, bufferObject, bufferArray);
+            toJson(CourseLevelEnum.class, bufferObject, bufferArray);
             toJson(CourseChargeEnum.class, bufferObject, bufferArray);
             toJson(CourseStatusEnum.class, bufferObject, bufferArray);
             toJson(FileUseEnum.class, bufferObject, bufferArray);
             toJson(SmsUseEnum.class, bufferObject, bufferArray);
-            toJson(SmsStatusEnum.class, bufferObject, bufferArray);*/
+            toJson(SmsStatusEnum.class, bufferObject, bufferArray);
 
             StringBuffer buffer = bufferObject.append("\r\n").append(bufferArray);
             writeJs(buffer);

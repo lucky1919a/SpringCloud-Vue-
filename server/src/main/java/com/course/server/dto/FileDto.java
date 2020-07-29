@@ -47,6 +47,39 @@ public class FileDto {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date updatedAt;
 
+    /**
+     * 已上传分片
+     */
+    private Integer shardIndex;
+
+    /**
+     * 分片大小|B
+     */
+    private Integer shardSize;
+
+    /**
+     * 分片总数
+     */
+    private Integer shardTotal;
+
+    /**
+     * 文件标识
+     */
+    private String key;
+
+    /**
+     * base64
+     */
+    private String shard;
+
+    public String getShard() {
+        return shard;
+    }
+
+    public void setShard(String shard) {
+        this.shard = shard;
+    }
+
     public String getId() {
         return id;
     }
@@ -111,6 +144,38 @@ public class FileDto {
         this.updatedAt = updatedAt;
     }
 
+    public Integer getShardIndex() {
+        return shardIndex;
+    }
+
+    public void setShardIndex(Integer shardIndex) {
+        this.shardIndex = shardIndex;
+    }
+
+    public Integer getShardSize() {
+        return shardSize;
+    }
+
+    public void setShardSize(Integer shardSize) {
+        this.shardSize = shardSize;
+    }
+
+    public Integer getShardTotal() {
+        return shardTotal;
+    }
+
+    public void setShardTotal(Integer shardTotal) {
+        this.shardTotal = shardTotal;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
 
     @Override
     public String toString() {
@@ -126,6 +191,10 @@ public class FileDto {
         sb.append(", use=").append(use);
         sb.append(", createdAt=").append(createdAt);
         sb.append(", updatedAt=").append(updatedAt);
+        sb.append(", shardIndex=").append(shardIndex);
+        sb.append(", shardSize=").append(shardSize);
+        sb.append(", shardTotal=").append(shardTotal);
+        sb.append(", key=").append(key);
         sb.append("]");
         return sb.toString();
     }

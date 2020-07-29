@@ -54,6 +54,6 @@
 <!--        <table tableName="role_user" domainObjectName="RoleUser"/>-->
 <!--        <table tableName="member" domainObjectName="Member"/>-->
 <!--        <table tableName="sms" domainObjectName="Sms"/>-->
-        <table tableName="role_resource" domainObjectName="RoleResource"/>
+        <table tableName="file" domainObjectName="File"/>
     </context>
 </generatorConfiguration>

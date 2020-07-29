@@ -53,4 +53,54 @@ public class RoleController {
         roleService.delete(id);
         return responseServer;
     }
+
+    /**
+     * 保存资源
+     * @param roleDto
+     */
+    @PostMapping("/save-resource")
+    public ResponseServer saveResource(@RequestBody RoleDto roleDto) {
+        LOG.info("保存角色资源关联开始");
+        ResponseServer<RoleDto> responseServer = new ResponseServer<>();
+        roleService.saveResource(roleDto);
+        responseServer.setContent(roleDto);
+        return responseServer;
+    }
+
+    /**
+     * 加载已关联的资源
+     */
+    @GetMapping("/list-resource/{roleId}")
+    public ResponseServer listResource(@PathVariable String roleId) {
+        LOG.info("加载资源开始");
+        ResponseServer responseServer = new ResponseServer<>();
+        List<String> resourceIdList = roleService.listResource(roleId);
+        responseServer.setContent(resourceIdList);
+        return responseServer;
+    }
+
+    /**
+     * 保存用户
+     * @param roleDto
+     */
+    @PostMapping("/save-user")
+    public ResponseServer saveUser(@RequestBody RoleDto roleDto) {
+        LOG.info("保存角色用户关联开始");
+        ResponseServer<RoleDto> responseServer = new ResponseServer<>();
+        roleService.saveUser(roleDto);
+        responseServer.setContent(roleDto);
+        return responseServer;
+    }
+    /**
+     * 加载用户
+     * @param roleId
+     */
+    @GetMapping("/list-user/{roleId}")
+    public ResponseServer listUser(@PathVariable String roleId) {
+        LOG.info("加载用户开始");
+        ResponseServer responseServer = new ResponseServer<>();
+        List<String> userIdList = roleService.listUser(roleId);
+        responseServer.setContent(userIdList);
+        return responseServer;
+    }
 }

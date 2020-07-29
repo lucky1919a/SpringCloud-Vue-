@@ -31,6 +31,7 @@
       },
       data: function () {
         return {
+
         }
       },
       methods: {

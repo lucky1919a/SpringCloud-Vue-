@@ -7,6 +7,7 @@ import com.course.server.domain.Course;
 import com.course.server.dto.CourseCategoryDto;
 import com.course.server.dto.CourseContentDto;
 import com.course.server.dto.CourseDto;
+import com.course.server.dto.CoursePageDto;
 import com.course.server.service.CourseCategoryService;
 import com.course.server.service.CourseService;
 import org.slf4j.Logger;
@@ -33,10 +34,10 @@ public class CourseController {
 
 
     @RequestMapping("/query.do")
-    public ResponseServer query(@RequestBody Page page) {
+    public ResponseServer query(@RequestBody CoursePageDto pageDto) {
         ResponseServer responseServer = new ResponseServer();
-        courseService.list(page);
-        responseServer.setContent(page);
+        courseService.list(pageDto);
+        responseServer.setContent(pageDto);
         return responseServer;
     }
 
