@@ -25,11 +25,11 @@ freemarker模板引擎生成service、controller、vue
 3.上传文件类型和大小判断 √
 4.制作文件上传公共组件 √
 5.增加文件管理功能 √
-6.大文件断点续传，增加文件字段，适应分片上传  （file 各属性md5加密组成key值） 少部分x
-7.图片秒传   x
-8.基于oss的文件上传 x
+6.大文件断点续传，增加文件字段，适应分片上传  （file 各属性md5加密组成key值） 少部分 7/29 √
+7.图片秒传   7/29 √
+8.基于oss的文件上传 7/29 √
 
-9.阿里云视频点播服务,基于OSS原生SDK上传视频到点播 x
+9.阿里云视频点播服务,基于OSS原生SDK上传视频到点播 视频的加密与授权x
 
 7/21 用户管理与登录
 1.增加用户管理，用户是否存在验证;|从登录页面跳到控台主页时，侧边栏失效的问题 √
@@ -70,3 +70,12 @@ cnpm install --save-dev less-loader less
 7/26 项目优化
 
 7/27 项目总结..
+
+git 关联远程仓库 github
+Create a new repository
+从本地推送到现有仓库
+git remote add origin https://github.com/lucky1919a/SpringCloud-Vue-.git
+git remote -v
+git push -u origin master  push本地提交到远程仓库master
+拉取远程仓库代码 Git update Project
+111本地代码直接同步到远程仓库 增加push按钮 Menus and Toolbars - Navigation Toolbar
